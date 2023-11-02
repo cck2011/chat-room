@@ -1,7 +1,7 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth, provider, db } from "./firebaseConfig";
-
+// import { onAuthStateChanged } from 'firebase/auth';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 
 // Required for side-effects
@@ -14,42 +14,29 @@ export const Header = () => {
   const togglePopup = () => {
     setIsOpen(!isOpen);
   };
+
   const handleOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
   const handleCreateRoom = () => {
-    console.log("hi");
+
     CreateRoom();
     togglePopup();
   };
   const CreateRoom = async () => {
-    // const isRepeat = await checkRepeatRoom();
-    // if (isRepeat) {
-    // } else {
-      const docRef = addDoc(collection(db, "chatRoom"), {
+ addDoc(collection(db, "chatRoom"), {
         name: inputValue,
         lastUpdateTime: Date.now(),
       });
       setInputValue("");
       setIsOpen(false);
-      console.log("Document written with ID: ", docRef);
-    // }
+      // console.log("Document written with ID: ", docRef);
   };
-  // const checkRepeatRoom = async () => {
-  //   const q = query(
-  //     collection(db, "chatRoom"),
-  //     where("name", "==", inputValue)
-  //   );
-  //   const querySnapshot = await getDocs(q);
-  //   if (!querySnapshot.empty) {
-  //     return true;
-  //   }
-  //   return false;
-  // };
+
   const checkRepeatUser = async (email: string) => {
     const q = query(collection(db, "users"), where("email", "==", email));
     const querySnapshot = await getDocs(q);
-    console.log("docSnap.exists()", !querySnapshot.empty);
+    // console.log("docSnap.exists()", !querySnapshot.empty);
     if (!querySnapshot.empty) {
       return true;
     }
@@ -61,7 +48,7 @@ export const Header = () => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
         const user = result.user;
-        console.log("user", user);
+        // console.log("user", user);
         if (token && user.email && user.displayName) {
           localStorage.setItem("login", "true"); // Convert to string
           localStorage.setItem("email", user.email);
@@ -71,12 +58,12 @@ export const Header = () => {
           const userExists = await checkRepeatUser(user.email);
           if (userExists) {
           } else {
-            const docRef = addDoc(collection(db, "users"), {
+addDoc(collection(db, "users"), {
               name: user.displayName,
               email: user.email,
               lastLogin: user.metadata.creationTime,
             });
-            console.log("Document written with ID: ", docRef);
+            // console.log("Document written with ID: ", docRef);
           }
 
           setIsLogin("true");
@@ -89,20 +76,32 @@ export const Header = () => {
         console.log(errorCode, email, credential);
       });
   };
-
-  const signOut = () => {
-    localStorage.clear();
-    setIsLogin("false");
+  // const checkLoign = () =>{
+  //   onAuthStateChanged(auth, async (user)=>{
+  //     if(user){
+  //         setIsLogin("true")
+  //         console.log("Logged in ", user)
+  //     }else{
+  //       setIsLogin("false")
+  //         console.log("Logged out");
+  //     }
+  // })
+  // }
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      setIsLogin("false");
+      // Sign-out successful.
+    }).catch((error: any) => {
+     console.log(error)
+    });
+    
+    
   };
 
   useEffect(() => {
-    let login: string | null = localStorage.getItem("login");
-    if (login !== null) {
-      setIsLogin(login);
-    }
-    console.log("login", login);
-    console.log(isOpen);
-  }, [isLogin, isOpen]);
+
+    // console.log(isOpen);
+  }, []);
 
   return (
     <>
@@ -152,7 +151,7 @@ export const Header = () => {
             <button
               className="text-purple-500 hover:text-purple-700"
               type="submit"
-              onClick={signOut}
+              onClick={handleSignOut}
             >
               Sign Out
             </button>

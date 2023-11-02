@@ -30,7 +30,7 @@ export const Rooms = () => {
     });
   
     setFetchData(dataList);
-    console.log('dataList',dataList);
+    // console.log('dataList',dataList);
   };
 
 

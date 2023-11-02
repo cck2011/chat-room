@@ -17,7 +17,7 @@ export const UserList = () => {
     const querySnapshot = await getDocs(q);
     let dataList: UserData[] = []; 
     querySnapshot.forEach((doc) => {
-      console.log('doc', " => ", doc.data());
+      // console.log('doc', " => ", doc.data());
       dataList.push(doc.data() as UserData); 
     });
     setFetchData(dataList);
