@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth, provider, db } from "./firebaseConfig";
-// import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 
 // Required for side-effects
@@ -76,17 +76,17 @@ addDoc(collection(db, "users"), {
         console.log(errorCode, email, credential);
       });
   };
-  // const checkLoign = () =>{
-  //   onAuthStateChanged(auth, async (user)=>{
-  //     if(user){
-  //         setIsLogin("true")
-  //         console.log("Logged in ", user)
-  //     }else{
-  //       setIsLogin("false")
-  //         console.log("Logged out");
-  //     }
-  // })
-  // }
+  const checkLoign = () =>{
+    onAuthStateChanged(auth, async (user)=>{
+      if(user){
+          setIsLogin("true")
+          console.log("Logged in ", user)
+      }else{
+        setIsLogin("false")
+          console.log("Logged out");
+      }
+  })
+  }
   const handleSignOut = () => {
     signOut(auth).then(() => {
       setIsLogin("false");
@@ -99,7 +99,7 @@ addDoc(collection(db, "users"), {
   };
 
   useEffect(() => {
-
+    checkLoign()
     // console.log(isOpen);
   }, []);
 

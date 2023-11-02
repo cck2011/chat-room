@@ -44,12 +44,12 @@ export const Rooms = () => {
       <div className="flex-grow">
         <h1 className="text-3xl font-bold mb-6">Rooms</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {FetchData.map((room, index) => (
-            <Link to={`/chatRoom/${room.id}`}>
+          {FetchData.map((room, i) => (
+            <Link to={`/chatRoom/${room.id}`} key={i}>
           <div
             role="button"
             tabIndex={0}
-            key={index}
+            
             className="p-4 bg-gray-800 rounded-lg cursor-pointer transform hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring focus:border-blue-300 min-h-[100px]"
           >
             <h3 className="text-xl font-semibold mb-2 truncate">{room.name}</h3>
